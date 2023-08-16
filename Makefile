@@ -1,5 +1,9 @@
-EMCC_CFLAGS=--no-entry
-RUST_TARGET=wasm32-unknown-emscripten
+EMCC_CFLAGS=
+RUST_TARGET=wasm32-unknown-unknown
+
+ifeq ($(RUST_TARGET),wasm32-unknown-emscripten)
+  EMCC_CFLAGS=--no-entry
+endif
 
 all: wasm_web_test.wasm
 
