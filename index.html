@@ -8,24 +8,20 @@
     <body>
         <script>
             var wasmImports = {
-                invoke_vii: function(index, arg) {},
-                invoke_ii: function(index, arg) {},
-                invoke_v: function(index, arg) {},
-                __cxa_begin_catch: function() {},
-                proc_exit: function() {},
-                __cxa_find_matching_catch_3: function() {},
+                'alert': function(str) {
+                    alert(str)
+                }
             };
 
             var info = {
                 'env': wasmImports,
-                'wasi_snapshot_preview1': wasmImports,
             };
 
             fetch('./wasm_web_test.wasm')
                 .then(response => response.arrayBuffer())
                 .then(bytes => WebAssembly.instantiate(bytes, info))
                 .then(results => {
-                    console.log(results.instance.exports.double(10));
+                    results.instance.exports.call_custom_alert();
                 });
         </script>
     </body>

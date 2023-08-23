@@ -1,16 +1,20 @@
-EMCC_CFLAGS=
+EMCC_CFLAGS=--no-entry
 RUST_TARGET=wasm32-unknown-unknown
 
-ifeq ($(RUST_TARGET),wasm32-unknown-emscripten)
-  EMCC_CFLAGS=--no-entry
-endif
+.PHONY: main.html
+main.html: main.cpp libwasm_web_test.a
+	emcc $(LDFLAGS) -o main.html $^
+	wasm2wat main.wasm -o main.wat
+main.html: LDFLAGS = \
+	-sERROR_ON_UNDEFINED_SYMBOLS=0
 
-all: wasm_web_test.wasm
-
-wasm_web_test.wasm: src/lib.rs Makefile
+libwasm_web_test.a: ./src/lib.rs
 	EMCC_CFLAGS=${EMCC_CFLAGS} cargo build --target $(RUST_TARGET) --release
-	cp target/${RUST_TARGET}/release/wasm_web_test.wasm .
+	cp ./target/$(RUST_TARGET)/release/libwasm_web_test.a .
+	cp ./target/$(RUST_TARGET)/release/wasm_web_test.wasm .
+	wasm2wat wasm_web_test.wasm -o wasm_web_test.wat
 
 .PHONY: clean
 clean:
-	rm wasm_web_test.wasm
+	cargo clean
+	rm libwasm_web_test.a main.html main.js *.wasm *.wat
