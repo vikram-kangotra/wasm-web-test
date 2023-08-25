@@ -1,3 +1,7 @@
 /target
 /Cargo.lock
 *.wasm
+*.wat
+*.a
+main.html
+main.js

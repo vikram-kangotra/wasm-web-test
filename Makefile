@@ -1,12 +1,13 @@
-EMCC_CFLAGS=--no-entry
-RUST_TARGET=wasm32-unknown-unknown
+EMCC_CFLAGS="--no-entry --js-library=./src/library.js"
+RUST_TARGET=wasm32-unknown-emscripten
 
 .PHONY: main.html
 main.html: main.cpp libwasm_web_test.a
 	emcc $(LDFLAGS) -o main.html $^
 	wasm2wat main.wasm -o main.wat
 main.html: LDFLAGS = \
-	-sERROR_ON_UNDEFINED_SYMBOLS=0
+	-sERROR_ON_UNDEFINED_SYMBOLS=0 \
+	--js-library=./src/library.js 
 
 libwasm_web_test.a: ./src/lib.rs
 	EMCC_CFLAGS=${EMCC_CFLAGS} cargo build \
